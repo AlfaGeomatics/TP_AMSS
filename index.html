@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/Paradas_AMSS_1.js"></script>
+        <script src="data/AB_AMSS_2.js"></script>
+        <script src="data/MB_AMSS_3.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[13.67208803908725,-89.26003953998183],[13.68925390376248,-89.22543260638808]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        var layer_OSMStandard_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_Paradas_AMSS_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' +"<b>LATITUD: </b>"+ (feature.properties['LATITUD'] !== null ? Autolinker.link(feature.properties['LATITUD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>LONGITUD: </b>"+ (feature.properties['LONGITUD'] !== null ? Autolinker.link(feature.properties['LONGITUD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>NOMBRE: </b>"+ (feature.properties['NOMBRE'] !== null ? Autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>TIPO DE PARADA: </b>"+ (feature.properties['TIPO_DE_PA'] !== null ? Autolinker.link(feature.properties['TIPO_DE_PA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>TIPO DE SEÑALIZACIÓN: </b>"+ (feature.properties['SEÑALIZAC'] !== null ? Autolinker.link(feature.properties['SEÑALIZAC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>ESTADO: </b>"+ (feature.properties['ESTADO'] !== null ? Autolinker.link(feature.properties['ESTADO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>SENTIDO VIAL: </b>"+ (feature.properties['SENTIDO_VI'] !== null ? Autolinker.link(feature.properties['SENTIDO_VI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>TIPO DE ZONA: </b>"+ (feature.properties['ZONA_DE_RI'] !== null ? Autolinker.link(feature.properties['ZONA_DE_RI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>ESTADO: </b>"+ (feature.properties['AUTORIZADA'] !== null ? Autolinker.link(feature.properties['AUTORIZADA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Paradas_AMSS_1_0() {
+            return {
+                pane: 'pane_Paradas_AMSS_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(141,90,153,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Paradas_AMSS_1');
+        map.getPane('pane_Paradas_AMSS_1').style.zIndex = 401;
+        map.getPane('pane_Paradas_AMSS_1').style['mix-blend-mode'] = 'normal';
+        var layer_Paradas_AMSS_1 = new L.geoJson(json_Paradas_AMSS_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Paradas_AMSS_1',
+            layerName: 'layer_Paradas_AMSS_1',
+            pane: 'pane_Paradas_AMSS_1',
+            onEachFeature: pop_Paradas_AMSS_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Paradas_AMSS_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Paradas_AMSS_1);
+        map.addLayer(layer_Paradas_AMSS_1);
+        function pop_AB_AMSS_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' +"<b>RUTA: </b>"+ (feature.properties['NAME'] !== null ? Autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>RECORRIDO (IDA(01)/VUELTA(02)): </b>"+ (feature.properties['RECORRIDO'] !== null ? Autolinker.link(feature.properties['RECORRIDO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>INICIO L-V: </b>"+ (feature.properties['H_INIC_LV'] !== null ? Autolinker.link(feature.properties['H_INIC_LV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>FIN L-V: </b>"+ (feature.properties['H_FIN_LV'] !== null ? Autolinker.link(feature.properties['H_FIN_LV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>INICIO FS: </b>"+ (feature.properties['H_INIC_SD'] !== null ? Autolinker.link(feature.properties['H_INIC_SD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>FIN FS: </b>"+ (feature.properties['H_FIN_SD'] !== null ? Autolinker.link(feature.properties['H_FIN_SD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>TARIFA: </b>"+ (feature.properties['TARIFA_AUT'] !== null ? Autolinker.link(feature.properties['TARIFA_AUT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>KILOMETROS: </b>"+ (feature.properties['KILOMETROS'] !== null ? Autolinker.link(feature.properties['KILOMETROS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>CÓDIGO DE RUTA: </b>"+ (feature.properties['CODIGO_RUT'] !== null ? Autolinker.link(feature.properties['CODIGO_RUT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>OTRA TARIFA: </b>"+ (feature.properties['TARIFA_EXC'] !== null ? Autolinker.link(feature.properties['TARIFA_EXC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_AB_AMSS_2_0(feature) {
+            switch(String(feature.properties['RECORRIDO'])) {
+                case '01':
+                    return {
+                pane: 'pane_AB_AMSS_2',
+                opacity: 1,
+                color: 'rgba(2,71,167,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case '02':
+                    return {
+                pane: 'pane_AB_AMSS_2',
+                opacity: 1,
+                color: 'rgba(239,0,12,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_AB_AMSS_2');
+        map.getPane('pane_AB_AMSS_2').style.zIndex = 402;
+        map.getPane('pane_AB_AMSS_2').style['mix-blend-mode'] = 'normal';
+        var layer_AB_AMSS_2 = new L.geoJson(json_AB_AMSS_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AB_AMSS_2',
+            layerName: 'layer_AB_AMSS_2',
+            pane: 'pane_AB_AMSS_2',
+            onEachFeature: pop_AB_AMSS_2,
+            style: style_AB_AMSS_2_0,
+        });
+        bounds_group.addLayer(layer_AB_AMSS_2);
+        map.addLayer(layer_AB_AMSS_2);
+        function pop_MB_AMSS_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' +"<b>RUTA: </b>"+ (feature.properties['NAME'] !== null ? Autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>RECORRIDO: </b>"+ (feature.properties['RECORRIDO'] !== null ? Autolinker.link(feature.properties['RECORRIDO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>INICIO L-V: </b>"+ (feature.properties['H_INIC_LV'] !== null ? Autolinker.link(feature.properties['H_INIC_LV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>FIN L-V: </b>"+ (feature.properties['H_FIN_LV'] !== null ? Autolinker.link(feature.properties['H_FIN_LV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>INICIO FS: </b>"+ (feature.properties['H_INIC_SD'] !== null ? Autolinker.link(feature.properties['H_INIC_SD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>FIN FS: </b>"+ (feature.properties['H_FIN_SD'] !== null ? Autolinker.link(feature.properties['H_FIN_SD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>TARIFA: </b>"+ (feature.properties['TARIFA_AUT'] !== null ? Autolinker.link(feature.properties['TARIFA_AUT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>KILOMETROS: </b>"+ (feature.properties['KILOMETROS'] !== null ? Autolinker.link(feature.properties['KILOMETROS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>CÓDIGO DE RUTA: </b>"+ (feature.properties['CODIGO_RUT'] !== null ? Autolinker.link(feature.properties['CODIGO_RUT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +"<b>OTRA TARIFA: </b>"+ (feature.properties['TARIFA_EXC'] !== null ? Autolinker.link(feature.properties['TARIFA_EXC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_MB_AMSS_3_0(feature) {
+            switch(String(feature.properties['RECORRIDO'])) {
+                case '01':
+                    return {
+                pane: 'pane_MB_AMSS_3',
+                opacity: 1,
+                color: 'rgba(35,255,35,1.0)',
+                dashArray: '1,5',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case '02':
+                    return {
+                pane: 'pane_MB_AMSS_3',
+                opacity: 1,
+                color: 'rgba(250,169,5,1.0)',
+                dashArray: '1,5',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_MB_AMSS_3');
+        map.getPane('pane_MB_AMSS_3').style.zIndex = 403;
+        map.getPane('pane_MB_AMSS_3').style['mix-blend-mode'] = 'normal';
+        var layer_MB_AMSS_3 = new L.geoJson(json_MB_AMSS_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_MB_AMSS_3',
+            layerName: 'layer_MB_AMSS_3',
+            pane: 'pane_MB_AMSS_3',
+            onEachFeature: pop_MB_AMSS_3,
+            style: style_MB_AMSS_3_0,
+        });
+        bounds_group.addLayer(layer_MB_AMSS_3);
+        map.addLayer(layer_MB_AMSS_3);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'MB_AMSS<br /><table><tr><td style="text-align: center;"><img src="legend/MB_AMSS_3_IDA0.png" /></td><td>IDA</td></tr><tr><td style="text-align: center;"><img src="legend/MB_AMSS_3_VUELTA1.png" /></td><td>VUELTA</td></tr></table>': layer_MB_AMSS_3,'AB_AMSS<br /><table><tr><td style="text-align: center;"><img src="legend/AB_AMSS_2_IDA0.png" /></td><td>IDA</td></tr><tr><td style="text-align: center;"><img src="legend/AB_AMSS_2_VUELTA1.png" /></td><td>VUELTA</td></tr></table>': layer_AB_AMSS_2,'<img src="legend/Paradas_AMSS_1.png" /> Paradas_AMSS': layer_Paradas_AMSS_1,"OSM Standard": layer_OSMStandard_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
